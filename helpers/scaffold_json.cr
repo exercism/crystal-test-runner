@@ -88,7 +88,7 @@ class ParsingState
   end
 
   def handle_line(line : String)
-    if line.matches?(BLOCK_END)
+    if line.matches?(BLOCK_END) && @depth >= 0
       handle_end
     end
 
