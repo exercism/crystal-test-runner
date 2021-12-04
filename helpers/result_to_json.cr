@@ -62,10 +62,14 @@ def convert_to_test_cases(test_suite : XML::Node)
       failure = find_element(test_case, TAG_FAILURE)
       skipped = find_element(test_case, TAG_SKIPPED)
 
-      status = error || failure ? FAIL : (skipped ? ERROR : PASS)
-      message = failure ? failure.not_nil![ATTR_MESSAGE] : (
-        skipped ? "Test case unexpectedly skipped" : nil
-      )
+      status = (error || failure) ? FAIL : (skipped ? ERROR : PASS)
+      message =
+        case
+        when error   then "#{error[ATTR_MESSAGE]}\n#{test_case.content}".strip
+        when failure then "#{failure[ATTR_MESSAGE]}\n#{test_case.content}".strip
+        when skipped then "Test case unexpectedly skipped"
+        else              nil
+        end
 
       TestCase.new(
         test_case[ATTR_NAME],
