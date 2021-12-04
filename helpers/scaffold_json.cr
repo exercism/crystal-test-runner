@@ -1,3 +1,4 @@
+require "compiler/crystal/syntax"
 require "json"
 
 DESCRIBE_PREFIX = /^\s*describe\s/
@@ -7,22 +8,11 @@ BLOCK_END       = /^\s*end/
 CAPTURE_QUOTE   = /"([^"]+)"/
 
 class TestCase
-  property code_lines, depth, name
+  property code, name
 
-  def initialize(name : String, depth : Int32)
+  def initialize(name : String, code : String)
     @name = name
-    @code_lines = Array(String).new
-    @depth = depth
-  end
-
-  def code
-    min_indent =
-      code_lines.min_of do |line|
-        stripped = line.lstrip
-        line.size - stripped.size
-      end
-
-    code_lines.map { |line| line[min_indent..-1] }.join("\n")
+    @code = code
   end
 
   def to_json(json)
@@ -36,63 +26,57 @@ class TestCase
   end
 end
 
-class ParsingState
-  property in_test, depth, depth_of_test_case, current, breadcrumbs, test_cases
-
-  @breadcrumbs : Array(String)
-  @current : Nil | TestCase
-  @depth : Int32
-  @test_cases : Array(TestCase)
-  @in_test : Bool
+class TestVisitor < Crystal::Visitor
+  property tests, breadcrumbs
 
   def initialize
-    @depth = -1
-    @test_cases = Array(TestCase).new
+    @tests = Array(TestCase).new
     @breadcrumbs = Array(String).new
-    @in_test = false
   end
 
-  def add_breadcrumb(line : String)
-    match = line.match(CAPTURE_QUOTE)
-    capture = match[1]? if match
-    @breadcrumbs << capture if capture
-    @depth += 1 if capture
-  end
-
-  def remove_breadcrumb
-    breadcrumbs.pop
-  end
-
-  def current_name
+  def current_test_name_prefix
     breadcrumbs.join(" ")
   end
 
-  def found_test_case(line : String)
-    raise "Found unexpected test case in a test case" if in_test
+  def visit(node : Crystal::Call)
+    case node.name
+    when "describe"
+      handle_visit_describe_call(node)
+    when "it"
+      handle_visit_it_call(node)
+    when "pending"
+      handle_visit_it_call(node)
+    end
 
-    @in_test = true
-    test_case = TestCase.new(current_name, depth)
-    @current = test_case
-    @test_cases << test_case
+    false
   end
 
-  def handle_end
-    current_test_case_depth = current ? current.as(TestCase).depth : -1
-    at_test_case_depth = current_test_case_depth == depth
-
-    @depth -= 1
-    if at_test_case_depth
-      remove_breadcrumb
-      @in_test = false
+  def end_visit(node : Crystal::Call)
+    case node.name
+    when "describe"
+      handle_end_visit_describe_call(node)
     end
   end
 
-  def handle_line(line : String)
-    if line.matches?(BLOCK_END)
-      handle_end
-    end
+  def visit(node)
+    true
+  end
 
-    current.as(TestCase).code_lines << line if in_test
+  private def handle_visit_describe_call(node : Crystal::Call)
+    @breadcrumbs << node.args[0].not_nil!.as(Crystal::StringLiteral).value
+    accept(node.block.not_nil!)
+  end
+
+  private def handle_end_visit_describe_call(node : Crystal::Call)
+    breadcrumbs.pop
+    return true
+  end
+
+  private def handle_visit_it_call(node : Crystal::Call)
+    label = node.args[0].not_nil!.as(Crystal::StringLiteral).value
+    name = "#{current_test_name_prefix} #{label}"
+    code = node.block.not_nil!.body.to_s
+    @tests << TestCase.new(name, code)
   end
 end
 
@@ -109,23 +93,14 @@ end
 
 puts "* Reading spec file: #{test_file} 📖"
 
-tests = File
+test_file_content = File
   .read(test_file)
-  .lines
-  .reduce(ParsingState.new) do |state, line|
-    case line
-    when .matches?(DESCRIBE_PREFIX)
-      state.add_breadcrumb(line)
-    when .matches?(TEST_PREFIX), .matches?(PENDING_PREFIX)
-      state.add_breadcrumb(line)
-      state.found_test_case(line)
-    else
-      state.handle_line(line)
-    end
 
-    state
-  end
-  .test_cases
+parser = Crystal::Parser.new(test_file_content)
+ast = parser.parse
+
+visitor = TestVisitor.new
+visitor.accept(ast)
 
 scaffold =
   JSON.build do |json|
@@ -133,7 +108,7 @@ scaffold =
       json.field "version", 2
       json.field "status", nil
       json.field "message", nil
-      json.field "tests", tests
+      json.field "tests", visitor.tests
     end
   end
 
