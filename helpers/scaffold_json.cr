@@ -1,12 +1,6 @@
 require "compiler/crystal/syntax"
 require "json"
 
-DESCRIBE_PREFIX = /^\s*describe\s/
-TEST_PREFIX     = /^\s*it\s/
-PENDING_PREFIX  = /^\s*pending\s/
-BLOCK_END       = /^\s*end/
-CAPTURE_QUOTE   = /"([^"]+)"/
-
 class TestCase
   property code, name
 
