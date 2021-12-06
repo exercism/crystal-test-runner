@@ -5,7 +5,7 @@
   "tests": [
     {
       "name": "Bob #hey responds to stating something",
-      "test_code": "(Bob.hey(\"Tom-ay-to, tom-aaaah-to.\")).should(eq(\"Whatever.\"))",
+      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
       "status": "fail"
     }
   ]
