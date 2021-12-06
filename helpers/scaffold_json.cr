@@ -2,17 +2,44 @@ require "compiler/crystal/syntax"
 require "json"
 
 class TestCase
-  property code, name
+  property name : String
+  property source_code : Array(String)
+  property snippet : String
+  property start_location : Crystal::Location?
+  property end_location : Crystal::Location?
 
-  def initialize(name : String, code : String)
+  def initialize(
+    name : String,
+    source_code : Array(String),
+    snippet : String,
+    start_location : Crystal::Location?,
+    end_location : Crystal::Location?
+  )
     @name = name
-    @code = code
+    @source_code = source_code
+    @snippet = snippet
+    @start_location = start_location
+    @end_location = end_location
+  end
+
+  def test_code : String
+    start_location = self.start_location
+    end_location = self.end_location
+    return snippet if start_location.nil? || end_location.nil?
+
+    start_column_index = start_location.column_number - 1
+    start_line_index = start_location.line_number - 1
+    end_line_index = end_location.line_number - 1
+
+    source_code[start_line_index..end_line_index]
+      .map { |line| line[start_column_index..-1]? || "" }
+      .join("\n")
   end
 
   def to_json(json)
     json.object do
       json.field "name", name
-      json.field "test_code", code
+      json.field "test_code", test_code
       json.field "status", nil
       json.field "message", nil
       json.field "output", nil
@@ -21,11 +48,12 @@ class TestCase
 end
 
 class TestVisitor < Crystal::Visitor
-  property tests, breadcrumbs
+  property tests, breadcrumbs, source_code
 
-  def initialize
+  def initialize(source_code : Array(String))
     @tests = Array(TestCase).new
     @breadcrumbs = Array(String).new
+    @source_code = source_code
   end
 
   def current_test_name_prefix
@@ -69,8 +97,11 @@ class TestVisitor < Crystal::Visitor
   private def handle_visit_it_call(node : Crystal::Call)
     label = node.args[0].not_nil!.as(Crystal::StringLiteral).value
     name = "#{current_test_name_prefix} #{label}"
-    code = node.block.not_nil!.body.to_s
-    @tests << TestCase.new(name, code)
+
+    snippet = node.block.not_nil!.body.to_s
+    start_location = node.block.not_nil!.body.location
+    end_location = node.block.not_nil!.body.end_location
+    @tests << TestCase.new(name, source_code, snippet, start_location, end_location)
   end
 end
 
@@ -93,7 +124,7 @@ test_file_content = File
 parser = Crystal::Parser.new(test_file_content)
 ast = parser.parse
 
-visitor = TestVisitor.new
+visitor = TestVisitor.new(test_file_content.lines)
 visitor.accept(ast)
 
 scaffold =
