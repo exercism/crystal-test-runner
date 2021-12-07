@@ -6,7 +6,7 @@
       "name": "Bob #hey responds to stating something",
       "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
       "status": "fail",
-      "message": "Expected: \"Whatever.\"      got: \"Whatevah.\"\n\n    /usr/share/crystal/src/spec/methods.cr:82:5 in 'fail'\n/usr/share/crystal/src/spec/expectations.cr:449:9 in 'should'\ntests/example-partial-fail/spec/modified_test_spec.cr:7:7 in '->'\n/usr/share/crystal/src/primitives.cr:266:3 in 'internal_run'\n/usr/share/crystal/src/spec/example.cr:33:16 in 'run'\n/usr/share/crystal/src/spec/context.cr:18:23 in 'internal_run'\n/usr/share/crystal/src/spec/context.cr:330:7 in 'run'\n/usr/share/crystal/src/spec/context.cr:18:23 in 'internal_run'\n/usr/share/crystal/src/spec/context.cr:330:7 in 'run'\n/usr/share/crystal/src/spec/context.cr:18:23 in 'internal_run'\n/usr/share/crystal/src/spec/context.cr:147:7 in 'run'\n/usr/share/crystal/src/spec/dsl.cr:201:7 in '->'\n/usr/share/crystal/src/primitives.cr:266:3 in 'run'\n/usr/share/crystal/src/crystal/main.cr:45:14 in 'main'\n/usr/share/crystal/src/crystal/main.cr:119:3 in 'main'\n/lib/ld-musl-x86_64.so.1 in '??'"
+      "message": "Expected: \"Whatever.\"      got: \"Whatevah.\""
     },
     {
       "name": "Bob #hey responds to blank input",
