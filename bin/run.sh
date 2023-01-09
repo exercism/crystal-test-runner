@@ -22,11 +22,16 @@ if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
 fi
 
 slug="$1"
-snake_slug=$()
+snake_slug=${slug//-/_}
 input_dir="${2%/}"
 output_dir="${3%/}"
-spec_files=( ${input_dir}/spec/*_spec.cr )
-spec_file="${spec_files[0]}"
+if [[ -f "${input_dir}/spec/${snake_slug}_spec.cr" ]]
+then
+    spec_file="${input_dir}/spec/${snake_slug}_spec.cr"
+else
+    spec_files=( ${input_dir}/spec/*_spec.cr )
+    spec_file="${spec_files[0]}"
+fi
 modified_spec_file="${input_dir}/spec/modified_test_spec.cr"
 capture_file="${output_dir}/capture"
 scaffold_file="${output_dir}/scaffold.json"
