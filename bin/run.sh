@@ -25,13 +25,8 @@ slug="$1"
 snake_slug=${slug//-/_}
 input_dir="${2%/}"
 output_dir="${3%/}"
-if [[ -f "${input_dir}/spec/${snake_slug}_spec.cr" ]]
-then
-    spec_file="${input_dir}/spec/${snake_slug}_spec.cr"
-else
-    spec_files=( ${input_dir}/spec/*_spec.cr )
-    spec_file="${spec_files[0]}"
-fi
+config=$(jq -r '.files.test[0]' ${input_dir}/.meta/config.json)
+spec_file="${input_dir}/${config}"
 modified_spec_file="${input_dir}/spec/modified_test_spec.cr"
 capture_file="${output_dir}/capture"
 scaffold_file="${output_dir}/scaffold.json"
