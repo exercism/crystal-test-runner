@@ -83,7 +83,7 @@ class TestVisitor < Crystal::Visitor
   def visit(node)
     true
   end
-  
+
   private def handle_visit_describe_call(node : Crystal::Call)
     case arg = node.args[0]
     when Crystal::StringLiteral
