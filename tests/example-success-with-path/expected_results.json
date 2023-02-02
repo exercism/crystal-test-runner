@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "Bob::Bob1 #hey responds to stating something",
+      "test_code": "Bob::Bob1.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
+      "status": "pass"
+    }
+  ]
+}

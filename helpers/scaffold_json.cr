@@ -85,7 +85,12 @@ class TestVisitor < Crystal::Visitor
   end
 
   private def handle_visit_describe_call(node : Crystal::Call)
-    @breadcrumbs << node.args[0].not_nil!.as(Crystal::StringLiteral).value
+    case arg = node.args[0]
+    when Crystal::StringLiteral
+      @breadcrumbs << arg.value
+    when Crystal::Path
+      @breadcrumbs << arg.to_s
+    end
     accept(node.block.not_nil!)
   end
 
