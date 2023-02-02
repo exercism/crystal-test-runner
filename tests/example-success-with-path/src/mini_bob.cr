@@ -1,5 +1,5 @@
 class Bob
-  class Bob2
+  class Bob1
     def self.hey(string : String)
       "Whatever."
     end
