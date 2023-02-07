@@ -29,7 +29,7 @@ class TestCase
   property output : String?
   property task_id : Int32?
 
-  def initialize(@name, @test_code, @status, @message, @output, @task_id = 1)
+  def initialize(@name, @test_code, @status, @message, @output, @task_id = nil)
   end
 end
 
@@ -86,7 +86,7 @@ def convert_to_test_cases(test_suite : XML::Node)
         status,
         message,
         nil,
-        test_case["task_id"]? ? test_case["task_id"].to_i : 1
+        test_case["task_id"]? ? test_case["task_id"].to_i : nil
       )
     end
     .compact

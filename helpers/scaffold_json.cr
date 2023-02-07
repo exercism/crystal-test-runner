@@ -7,7 +7,7 @@ class TestCase
   property snippet : String
   property start_location : Crystal::Location?
   property end_location : Crystal::Location?
-  property count : Int32
+  property count : Int32?
 
   def initialize(
     name : String,
@@ -15,7 +15,7 @@ class TestCase
     snippet : String,
     start_location : Crystal::Location?,
     end_location : Crystal::Location?,
-    count : Int32
+    count : Int32?
   )
     @name = name
     @source_code = source_code
@@ -113,8 +113,7 @@ class TestVisitor < Crystal::Visitor
     snippet = node.block.not_nil!.body.to_s
     start_location = node.block.not_nil!.body.location
     end_location = node.block.not_nil!.body.end_location
-    @count = 1 if @count == 0
-    @tests << TestCase.new(name, source_code, snippet, start_location, end_location, @count)
+    @tests << TestCase.new(name, source_code, snippet, start_location, end_location, @count != 0 ? @count : nil)
   end
 end
 
@@ -143,7 +142,7 @@ visitor.accept(ast)
 scaffold =
   JSON.build do |json|
     json.object do
-      json.field "version", 2
+      json.field "version", 3
       json.field "status", nil
       json.field "message", nil
       json.field "tests", visitor.tests
