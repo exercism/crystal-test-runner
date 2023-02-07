@@ -6,12 +6,14 @@
       "name": "Bob #hey responds to stating something",
       "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
       "status": "fail",
-      "message": "Expected: \"Whatever.\"      got: \"Whatevah.\""
+      "message": "Expected: \"Whatever.\"      got: \"Whatevah.\"",
+      "task_id": 1
     },
     {
       "name": "Bob #hey responds to blank input",
       "test_code": "Bob.hey(\"       \").should eq \"Fine. Be that way!\"",
-      "status": "pass"
+      "status": "pass",
+      "task_id": 1
     }
   ]
 }

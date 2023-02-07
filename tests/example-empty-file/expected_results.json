@@ -6,7 +6,8 @@
     {
       "name": "Bob #hey responds to stating something",
       "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
-      "status": "fail"
+      "status": "fail",
+      "task_id": 1
     }
   ]
 }

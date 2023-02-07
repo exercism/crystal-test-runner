@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "Bob hey responds to stating something",
+      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever. Tom-ay-to, tom-aaaah-to.\"",
+      "status": "pass",
+      "task_id": 1
+    },
+    {
+      "name": "Bob hey doesnt add extra part when not given",
+      "test_code": "Bob.hey(\"\").should eq \"Whatever. \"",
+      "status": "pass",
+      "task_id": 1
+    },
+    {
+      "name": "Bob bye says bye when calling bye",
+      "test_code": "Bob.bye(\"\").should eq \"Bye.\"",
+      "status": "pass",
+      "task_id": 2
+    }
+  ]
+}
