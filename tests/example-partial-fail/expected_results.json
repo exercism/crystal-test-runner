@@ -1,15 +1,15 @@
 {
-  "version": 2,
+  "version": 3,
   "status": "fail",
   "tests": [
     {
-      "name": "Bob #hey responds to stating something",
+      "name": "Bob responds to stating something",
       "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
       "status": "fail",
       "message": "Expected: \"Whatever.\"      got: \"Whatevah.\""
     },
     {
-      "name": "Bob #hey responds to blank input",
+      "name": "Bob responds to blank input",
       "test_code": "Bob.hey(\"       \").should eq \"Fine. Be that way!\"",
       "status": "pass"
     }
