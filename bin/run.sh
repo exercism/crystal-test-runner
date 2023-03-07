@@ -37,7 +37,7 @@ mkdir -p "${output_dir}"
 
 echo "${slug}: testing..."
 
-cat "${spec_file}" | sed -e 's/\(\s\)pending\(.*\)/\1it\2/' > "${modified_spec_file}"
+./bin/setup_test_file "${spec_file}" "${modified_spec_file}"
 
 # Run the tests for the provided implementation file and redirect stdout and
 # stderr to capture it
