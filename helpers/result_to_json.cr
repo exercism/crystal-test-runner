@@ -85,8 +85,7 @@ def convert_to_test_cases(test_suite : XML::Node, json_file : JSON::Any)
         nil,
         status,
         message,
-        json_file[i].to_s
-        nil,
+        json_file[i].to_s,
         test_case["task_id"]? ? test_case["task_id"].to_i : nil
       )
     end
