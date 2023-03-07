@@ -1,9 +1,9 @@
 {
-  "version": 2,
+  "version": 3,
   "status": "pass",
   "tests": [
     {
-      "name": "Bob #hey responds to stating something",
+      "name": "Bob responds to stating something",
       "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
       "status": "pass"
     }
