@@ -80,12 +80,13 @@ def convert_to_test_cases(test_suite : XML::Node, json_file : JSON::Any)
         else              nil
         end
       i += 1
+      output = json_file[i].to_s.empty? ? nil : json_file[i].to_s
       TestCase.new(
         test_case[ATTR_NAME],
         nil,
         status,
         message,
-        json_file[i].to_s.empty? ? nil : json_file[i].to_s,
+        output,
         test_case["task_id"]? ? test_case["task_id"].to_i : nil
       )
     end
@@ -156,6 +157,7 @@ junit_document = XML.parse(junit_xml)
 junit_testsuite = find_testsuite(junit_document)
 
 json_ouput = JSON.parse(File.read("/tmp/ouput.json"))
+File.delete("/tmp/ouput.json")
 
 test_cases = convert_to_test_cases(junit_testsuite, json_ouput)
 test_run.tests = merge_test_cases(test_run.tests, test_cases)
