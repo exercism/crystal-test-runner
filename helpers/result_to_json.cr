@@ -52,7 +52,8 @@ def find_testsuite(document : XML::Node)
   find_element(document, TAG_TESTSUITE).not_nil!
 end
 
-def convert_to_test_cases(test_suite : XML::Node)
+def convert_to_test_cases(test_suite : XML::Node, json_file : JSON::Any)
+  i = -1
   test_suite.children
     .map do |test_case|
       if test_case.name != TAG_TESTCASE
@@ -78,14 +79,14 @@ def convert_to_test_cases(test_suite : XML::Node)
         when skipped then "Test case unexpectedly skipped"
         else              nil
         end
-
-
+      i += 1
+      output = json_file[i].to_s.empty? ? nil : json_file[i].to_s
       TestCase.new(
         test_case[ATTR_NAME],
         nil,
         status,
         message,
-        nil,
+        output,
         test_case["task_id"]? ? test_case["task_id"].to_i : nil
       )
     end
@@ -155,7 +156,10 @@ junit_xml = File.read(junit_file)
 junit_document = XML.parse(junit_xml)
 junit_testsuite = find_testsuite(junit_document)
 
-test_cases = convert_to_test_cases(junit_testsuite)
+json_output = JSON.parse(File.read("/tmp/output.json"))
+File.delete("/tmp/output.json")
+
+test_cases = convert_to_test_cases(junit_testsuite, json_output)
 test_run.tests = merge_test_cases(test_run.tests, test_cases)
 set_test_run_status(test_run, junit_testsuite)
 
