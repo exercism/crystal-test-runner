@@ -156,10 +156,10 @@ junit_xml = File.read(junit_file)
 junit_document = XML.parse(junit_xml)
 junit_testsuite = find_testsuite(junit_document)
 
-json_ouput = JSON.parse(File.read("/tmp/ouput.json"))
-File.delete("/tmp/ouput.json")
+json_output = JSON.parse(File.read("/tmp/output.json"))
+File.delete("/tmp/output.json")
 
-test_cases = convert_to_test_cases(junit_testsuite, json_ouput)
+test_cases = convert_to_test_cases(junit_testsuite, json_output)
 test_run.tests = merge_test_cases(test_run.tests, test_cases)
 set_test_run_status(test_run, junit_testsuite)
 
