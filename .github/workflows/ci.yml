@@ -25,5 +25,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - name: Install sponge
+        run: apt-get install moreutils
       - name: Check compatibility with current exercises
         run: bin/run-all-exercises-in-docker.sh /tmp/output
