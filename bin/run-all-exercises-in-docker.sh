@@ -26,7 +26,7 @@ if [ -d "/tmp/crystal" ]; then
 rm -rf /tmp/crystal
 fi
 
-git clone --branch Add-resistor-trio https://github.com/meatball133/crystal.git /tmp/crystal
+git clone  https://github.com/exercism/crystal /tmp/crystal
 
 input_dir="/tmp/crystal/exercises/practice"
 output_dir="${1%/}"
