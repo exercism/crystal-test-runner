@@ -18,3 +18,6 @@ jobs:
 
       - name: Run Tests in Docker
         run: bin/run-tests-in-docker.sh
+
+      - name: Check compatibility with current exercises
+        run: bin/run-all-exercises-in-docker.sh /tmp/output
