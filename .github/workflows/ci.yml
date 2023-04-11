@@ -22,6 +22,6 @@ jobs:
   exercises:
     name: Exercises
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: Check compatibility with current exercises
         run: bin/run-all-exercises-in-docker.sh /tmp/output
