@@ -17,13 +17,20 @@ set -e
 # ./bin/run-all-exercises-in-docker.sh absolute/path/exercises /absolute/path/to/output/directory/
 
 # If any required arguments is missing, print the usage and exit
-if [ -z "$1" ] || [ -z "$2" ]; then
-   echo "usage: ./bin/run-in-docker.sh absolute/path/exercises /absolute/path/to/output/directory/"
+if [ -z "$1" ]; then
+   echo "usage: ./bin/run-in-docker.sh /absolute/path/to/output/directory/"
     exit 1
 fi
 
-input_dir="${1%/}"
-output_dir="${2%/}"
+if [ -d "/tmp/crystal" ]; then
+rm -rf /tmp/crystal
+fi
+
+git clone  https://github.com/exercism/crystal /tmp/crystal
+
+input_dir="/tmp/crystal/exercises/practice"
+output_dir="${1%/}"
+exit_code=0
 
 # Create the output directory if it doesn't exist
 mkdir -p "${output_dir}"
@@ -58,6 +65,7 @@ for test_dir in ${input_dir}/*; do
     fi
     if jq -e '.[] | select(. == "fail")' ${output_tmpdir}/results.json || ! [ -s ${output_tmpdir}/results.json ]; then
         if ! [ -s ${output_dir}/fail.json ]; then
+        exit_code=1
         touch ${output_dir}/fail.json
         jq -n '{}' > ${output_dir}/fail.json
         jq '. += {"exercises": []}' ${output_dir}/fail.json | sponge ${output_dir}/fail.json
@@ -65,3 +73,7 @@ for test_dir in ${input_dir}/*; do
         jq --arg key "$(basename ${test_dir})" '.exercises += [$key]' ${output_dir}/fail.json | sponge ${output_dir}/fail.json
     fi
 done
+
+rm -rf /tmp/crystal
+
+exit ${exit_code}
