@@ -1,4 +1,4 @@
-FROM crystallang/crystal:1.2.2-alpine
+FROM crystallang/crystal:1.8.1-alpine
 
 # install packages required to run the tests
 RUN apk add --no-cache bash jq coreutils
