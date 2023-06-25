@@ -4,4 +4,4 @@
 
 # 1.0
 
-- Inital version
+- Initial version
