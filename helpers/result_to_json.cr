@@ -81,6 +81,15 @@ def convert_to_test_cases(test_suite : XML::Node, json_file : JSON::Any)
         end
       i += 1
       output = json_file[i].to_s.empty? ? nil : json_file[i].to_s
+      output = unless json_file[i].to_s.empty?
+        output = json_file[i].to_s
+        if output.size >= 500
+          output = output[..455] + "Output was truncated. Please limit to 500 chars"
+        end
+        output
+      else
+        nil
+      end
       TestCase.new(
         test_case[ATTR_NAME],
         nil,
