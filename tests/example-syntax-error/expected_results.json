@@ -1,12 +1,5 @@
 {
   "version": 3,
   "status": "error",
-  "message": "In tests/example-syntax-error/src/mini_bob.cr:6:1\n\n 6 | end\n     ^\nError: expecting token 'EOF', not 'end'\n",
-  "tests": [
-    {
-      "name": "Bob responds to stating something",
-      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
-      "status": "fail"
-    }
-  ]
+  "message": "In tests/example-syntax-error/src/mini_bob.cr:6:1\n\n 6 | end\n     ^\nError: expecting token 'EOF', not 'end'\n"
 }

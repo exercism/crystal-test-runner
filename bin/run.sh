@@ -43,7 +43,6 @@ echo "${slug}: testing..."
 # stderr to capture it
 crystal spec "${modified_spec_file}" --junit_output="${output_dir}" --no-color &> "${capture_file}"
 
-./bin/scaffold_json "${spec_file}" "${scaffold_file}"
-./bin/result_to_json "${capture_file}" "${junit_file}" "${scaffold_file}" "${results_file}"
+./bin/test_runner "${spec_file}" "${capture_file}" "${junit_file}" "${results_file}"
 
 echo "${slug}: done"

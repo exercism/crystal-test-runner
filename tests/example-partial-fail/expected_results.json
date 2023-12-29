@@ -4,14 +4,14 @@
   "tests": [
     {
       "name": "Bob responds to stating something",
-      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
       "status": "fail",
+      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
       "message": "Expected: \"Whatever.\"      got: \"Whatevah.\""
     },
     {
       "name": "Bob responds to blank input",
-      "test_code": "Bob.hey(\"       \").should eq \"Fine. Be that way!\"",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "Bob.hey(\"       \").should eq \"Fine. Be that way!\""
     }
   ]
 }

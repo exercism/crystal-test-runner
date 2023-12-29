@@ -1,6 +1,16 @@
+# 2.0
+
+- Move to Crystal 1.11.X
+- Refactored test runner
+  - Going from three exectuables down to two
+  - Improved build time
+  - Simplify the scripts to make them easier to maintain.
+    This includes around a 40-50 percent reduction of lines of code
+- Improved documentation
+
 # 1.2
 
-- Move to Crystal 1.10.x
+- Move to Crystal 1.10.1
 - Limit output to 500 characters
 
 # 1.1.0
