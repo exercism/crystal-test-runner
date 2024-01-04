@@ -4,6 +4,13 @@ require "./test_visitor.cr"
 require "xml"
 
 module TestRunner
+
+  # The TestCase class is used to represent a single test case,
+  # following the version 3 of the exercisms test runner interface.
+  #
+  # The class is [json serializable](https://crystal-lang.org/api/JSON/Serializable.html), and can thereby have methods
+  # to modify the state of the object.
+  # The class does not feature any other methods then json serialization.
   class TestCase
     include JSON::Serializable
     property name : String
@@ -13,6 +20,20 @@ module TestRunner
     property output : String?
     property task_id : Int32?
 
+    # Initializes a new TestCase object.
+    #
+    # The class takes the following arguments when initialized:
+    # - *name* - The name of the test case
+    # - *status* - The status of the test case, can be either "pass", "fail" or "error"
+    # - *test_code* - The code that was tested
+    # - *message* - The error message if the test case failed or errored
+    # - *output* - The output of the test case
+    # - *task_id* - The id of the task that the test case belongs to
+    #
+    # Example:
+    # ```
+    # TestCase.new("test case name", "pass", "test code", nil, "test output", 1)
+    # ```
     def initialize(name : String, status : String, test_code : String, message : String?, output : String?, task_id : Int32?)
       @name = name
       @status = status
@@ -23,13 +44,30 @@ module TestRunner
     end
   end
 
+  # The TestSuite class is used to represent a test suite,
+  # following the version 3 of the exercisms test runner interface.
+  #
+  # The class is [json serializable](https://crystal-lang.org/api/JSON/Serializable.html), and can thereby have methods
+  # to modify the state of the object.
+  # The class does not feature any other methods then json serialization.
   class TestSuite
     include JSON::Serializable
-    property version : Int32 = 3
+    property version : Int32 = 3 # The version of the test runner interface
     property status : String
     property message : String?
     property tests : Array(TestCase)?
 
+    # Initializes a new TestSuite object.
+    #
+    # The class takes the following arguments when initialized:
+    # - *status* - The status of the test suite, can be either "pass", "fail" or "error"
+    # - *message* - The error message if the test suite failed or errored
+    # - *tests* - The tests that the test suite contains
+    # 
+    # Example:
+    # ```
+    # TestSuite.new("pass", nil, [TestCase.new("test case name", "pass", "test code", nil, "test output", 1)])
+    # ```
     def initialize(status : String, message : String?, tests : Array(TestCase)?)
       @status = status
       @tests = tests
@@ -37,25 +75,44 @@ module TestRunner
     end
   end
 
-  def self.execute(spec_file : String, capture_file : String, junit_file : String, result_file : String)
-    included_failing = false
+  # The execute method is the entry point of the test runner
+  # and is used to execute the test runner and write the result file.
+  #
+  # The method takes the following arguments:
+  # - *spec_file* - The path to the spec file
+  # - *capture_file* - The path to the capture file
+  # - *junit_file* - The path to the junit xml file
+  # - *result_file* - The path to the result file
+  #
+  # Example:
+  # ```
+  # TestRunner.execute("/tmp/spec.cr", "/tmp/capture.txt", "/tmp/junit.xml", "/tmp/result.json")
+  # ```
+  def self.execute(spec_file_path : String, capture_file_path : String, junit_file_path : String, result_file_path : String)
+    included_failing = false # This determines if the test suite should be marked as passing or failing
 
-    unless File.exists?(junit_file)
+    # If the junit xml file does not exist, then it is assumed that the test suite errored.
+    # The error message is read from the capture file and written to the result file and
+    # execution is stopped.
+    unless File.exists?(junit_file_path)
       puts "* Failed finding junit xml ❌"
-      error_message = File.read(capture_file)
-      File.write(result_file, TestSuite.new("error", error_message, nil).to_json)
+      error_message = File.read(capture_file_path)
+      File.write(result_file_path, TestSuite.new("error", error_message, nil).to_json)
       exit(0)
     end
 
-    junit_testsuite = parse_xml(junit_file)
+    # If the junit xml file exists it is parsed using the parse_xml method.
+    junit_testsuite = parse_xml(junit_file_path)
     puts "* Reading junit xml ✅"
 
-    parsed_spec_file = parse_spec_file(spec_file)
+    parsed_spec_file = parse_spec_file(spec_file_path)
     puts "* Reading spec file ✅"
 
-    parsed_standard_output = parse_standard_output()
+    # The standard output has a set path defined by the **setup_test_file.cr** file.
+    parsed_standard_output = parse_standard_output
     puts "* Parsing standard output ✅"
-
+  
+    # 
     result = parsed_spec_file.map_with_index do |snippet, index|
       test_case = junit_testsuite.children.find do |test_case|
         name = test_case["name"]?
@@ -89,9 +146,9 @@ module TestRunner
     puts "* Grouping solution ✅"
 
     if included_failing
-      File.write(result_file, TestSuite.new("fail", nil, result).to_json)
+      File.write(result_file_path, TestSuite.new("fail", nil, result).to_json)
     else
-      File.write(result_file, TestSuite.new("pass", nil, result).to_json)
+      File.write(result_file_path, TestSuite.new("pass", nil, result).to_json)
     end
 
     puts "* Writing result file ✅"
