@@ -112,28 +112,38 @@ module TestRunner
     parsed_standard_output = parse_standard_output
     puts "* Parsing standard output ✅"
   
-    # 
-    result = parsed_spec_file.map_with_index do |snippet, index|
+    # Assinging the testcases through looping through the ast of the spec file.
+    test_cases = parsed_spec_file.map_with_index do |snippet, index|
+
+      # Finding the test case in the junit xml file that matches the current test case.
+      # This expression returns the test case node if it is found, otherwise it returns nil.
       test_case = junit_testsuite.children.find do |test_case|
         name = test_case["name"]?
+        # if the name is nil, then it is assumed that the xml node is not a test case node.
         if name.nil?
           false
         else
           name == snippet[:name]
         end
       end
+
+      # If the test case isnt found then it is taken for granted that an error occured during exection.
       if test_case
+        # If the standard output is empty, then the output is set to nil.
         if parsed_standard_output[index].to_s.empty?
           output = nil
         else
           output = parsed_standard_output[index].to_s
         end
 
+        # Checking if there is a subnode called failure.
         failure = test_case.children.find { |node| node.name == "failure" }
 
         if failure.nil?
           TestCase.new(snippet[:name], "pass", snippet[:snippet], nil, output, snippet[:task_id])
         else
+          # If there is a failure node, then the test case is marked as failing.
+          # Which marks the test suite as failing.
           included_failing = true
           TestCase.new(snippet[:name], "fail", snippet[:snippet], failure["message"]?, output, snippet[:task_id])
         end
@@ -145,17 +155,29 @@ module TestRunner
 
     puts "* Grouping solution ✅"
 
+    # If the result array contains any failing test cases, then the test suite is marked as failing.
     if included_failing
-      File.write(result_file_path, TestSuite.new("fail", nil, result).to_json)
+      File.write(result_file_path, TestSuite.new("fail", nil, test_cases).to_json)
     else
-      File.write(result_file_path, TestSuite.new("pass", nil, result).to_json)
+      File.write(result_file_path, TestSuite.new("pass", nil, test_cases).to_json)
     end
 
     puts "* Writing result file ✅"
   end
 
-  private def self.parse_spec_file(file : String) : Array(NamedTuple(snippet: String, name: String, task_id: Int32?))
-    spec_file_content = File.read(file)
+  # The parse_spec_file method is used to parse the spec file.
+  # It parses it by using ast parsing and then traversing the ast.
+  # The information is gathered by using the TestVisitor class.
+  #
+  # This method takes the following arguments:
+  # - *spec_file_path* - The path to the spec file
+  #
+  # Example:
+  # ```
+  # parse_spec_file("/tmp/spec.cr")
+  # ```
+  private def self.parse_spec_file(spec_file_path : String) : Array(NamedTuple(snippet: String, name: String, task_id: Int32?))
+    spec_file_content = File.read(spec_file_path)
     parser = Crystal::Parser.new(spec_file_content)
     parsed_spec_file = parser.parse
     test_visitor = TestVisitor.new(spec_file_content.split("\n"))
@@ -163,14 +185,32 @@ module TestRunner
     test_visitor.result
   end
 
+  # Parses the standard output file and returns the parsed result.
+  # The file is a json file that is written by the **setup_test_file.cr** file.
+  # 
+  # After the file is parsed it is deleted.
+  # This is because the file is always appended to,
+  # Thereby if not deleted, the file would include the output from previous test runs.
   private def self.parse_standard_output : JSON::Any
     standard_output = File.read("/tmp/output.json")
     File.delete("/tmp/output.json")
     JSON.parse(standard_output)
   end
 
-  private def self.parse_xml(junit_file : String) : XML::Node
-    junit_xml_content = File.read(junit_file)
+  # The parse_xml method is used to parse the junit xml file.
+  # The method returns the testsuite node of the xml file.
+  #
+  # If the file is not a valid junit xml file, then an error is raised.
+  #
+  # This method takes the following arguments:
+  # - *junit_file_path* - The path to the junit xml file
+  #
+  # Example:
+  # ```
+  # parse_xml("/tmp/junit.xml")
+  # ```
+  private def self.parse_xml(junit_file_path : String) : XML::Node
+    junit_xml_content = File.read(junit_file_path)
     junit_xml = XML.parse(junit_xml_content)
     testsuit = junit_xml.children.find { |node| node.name == "testsuite" }
     if testsuit.nil?
@@ -180,11 +220,13 @@ module TestRunner
   end
 end
 
+# Assiging ARGV values:
 spec_output = ARGV[0]?
 output_file = ARGV[1]?
 junit_file = ARGV[2]?
 result_file = ARGV[3]?
 
+# If any of the arguments are nil (isn't given), then the usage is printed.
 if spec_output.nil? || output_file.nil? || junit_file.nil? || result_file.nil?
   puts "Usage: crystal run test_runner.cr -- <spec_output> <output_file> <junit_file> <result_file>"
 else
