@@ -4,8 +4,8 @@
   "tests": [
     {
       "name": "Bob responds to stating something",
-      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\""
     }
   ]
 }
