@@ -1,14 +1,25 @@
 require "compiler/crystal/syntax"
 
+# This visitor is used to extract the test snippets from the source code.
+# It is used to get the test_code snippets for the test cases.
+# But also to get a list of the name of all the test cases.
+# Last but not least it also adds the task_id to the test cases.
 class TestVisitor < Crystal::Visitor
   getter result = [] of NamedTuple(snippet: String, name: String, task_id: Int32?)
 
+  # The initilization of the visitor.
+  # The source_code is used to get the test snippets.
+  # The level is used to give the test cases a task_id.
+  # The breadcrumbs are used to get the name of the test cases.
   def initialize(source_code : Array(String))
     @level = 0
     @breadcrumbs = [] of String
     @source_code = source_code
   end
 
+  # This method is used to visit the nodes of the AST, specifically the Call nodes.
+  # If the name is either describe, it or pending it will call the corresponding method.
+  # Otherwise will it not dig deeper into the AST.
   def visit(node : Crystal::Call)
     case node.name
     when "describe"
@@ -20,12 +31,15 @@ class TestVisitor < Crystal::Visitor
     false
   end
 
+  # This method is used to end the visit of the nodes of the AST, specifically the Call nodes.
   def end_visit(node : Crystal::Call)
     if node.name == "describe"
       handle_end_visit_describe_call(node)
     end
   end
 
+  # This method is used to visit the nodes of the AST, which hasn't been handled by the other visit methods.
+  # It tells the visitor to dig deeper into the AST.
   def visit(node)
     true
   end
