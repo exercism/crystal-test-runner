@@ -1,6 +1,6 @@
 # 2.0
 
-- Move to Crystal 1.11.1
+- Move to Crystal 1.11.2
 - Refactored test runner
   - Going from three exectuables down to two
   - Improved build time
