@@ -1,6 +1,6 @@
 # 2.0.1
 
-- Fixed so the test runner will pick up run times errors as actuall errors and not make test suite pass
+- Fixed so the test runner will pick up runtime errors as actual errors and not make test suite pass
 
 # 2.0
 
