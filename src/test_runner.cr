@@ -140,23 +140,19 @@ module TestRunner
         failure = test_case.children.find { |node| node.name == "failure" }
         error = test_case.children.find { |node| node.name == "error" }
 
-        result = nil
         if error_secure = error
           # If there is a error node, then the test case is marked as failing.
           # Which marks the test suite as failing.
           included_failing = true
-          result = TestCase.new(snippet[:name], "error", snippet[:snippet], error_secure["message"]?, output, snippet[:task_id])
-        end
-        if failure_secure = failure
+          TestCase.new(snippet[:name], "error", snippet[:snippet], error_secure["message"]?, output, snippet[:task_id])
+        elsif failure_secure = failure
           # If there is a failure node, then the test case is marked as failing.
           # Which marks the test suite as failing.
           included_failing = true
-          result = TestCase.new(snippet[:name], "fail", snippet[:snippet], failure_secure["message"]?, output, snippet[:task_id])
+          TestCase.new(snippet[:name], "fail", snippet[:snippet], failure_secure["message"]?, output, snippet[:task_id])
+        else
+          TestCase.new(snippet[:name], "pass", snippet[:snippet], nil, output, snippet[:task_id])
         end
-        if result.nil?
-          result = TestCase.new(snippet[:name], "pass", snippet[:snippet], nil, output, snippet[:task_id])
-        end
-        result
       else
         included_failing = true
         TestCase.new(snippet[:name], "error", snippet[:snippet], "Test case not found", nil, snippet[:task_id])
