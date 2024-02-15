@@ -1,0 +1,18 @@
+{
+  "version": 3,
+  "status": "fail",
+  "tests": [
+    {
+      "name": "Bob responds to stating something",
+      "status": "error",
+      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever.\"",
+      "message": "Argument error"
+    },
+    {
+      "name": "Bob responds to blank input",
+      "status": "error",
+      "test_code": "Bob.hey(\"       \").should eq \"Fine. Be that way!\"",
+      "message": "Argument error"
+    }
+  ]
+}
