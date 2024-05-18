@@ -1,3 +1,7 @@
+# 2.0.2
+
+- Move to Crystal 1.12.1
+
 # 2.0.1
 
 - Fixed so the test runner will pick up runtime errors as actual errors and not make test suite pass
