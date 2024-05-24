@@ -46,7 +46,10 @@ class TestVisitor < Crystal::Visitor
 
   private def handle_visit_describe_call(node : Crystal::Call)
     if tags = node.named_args
-      @task_id = tags[0].value.as(Crystal::StringLiteral).value.to_i
+      if tags.any?{ |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional"}
+        return
+      end
+      @task_id = tags[0].value.as(Crystal::StringLiteral).value.to_i? # TODO: Write to be more robust to be able to support both optinal and task_id
     else
       @task_id = nil
     end
@@ -61,6 +64,11 @@ class TestVisitor < Crystal::Visitor
   end
 
   private def handle_end_visit_describe_call(node : Crystal::Call)
+    if tags = node.named_args
+      if tags.any?{ |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional"}
+        return
+      end
+    end
     @breadcrumbs.pop
     true
   end
