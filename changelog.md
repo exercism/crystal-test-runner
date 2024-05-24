@@ -1,3 +1,8 @@
+# 2.1
+
+- Move to Crystal 1.13.x
+- Changed task_id system to make it more secure but also more feature rich
+
 # 2.0.2
 
 - Move to Crystal 1.12.1

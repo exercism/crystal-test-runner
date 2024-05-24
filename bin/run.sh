@@ -41,7 +41,7 @@ echo "${slug}: testing..."
 
 # Run the tests for the provided implementation file and redirect stdout and
 # stderr to capture it
-crystal spec "${modified_spec_file}" --junit_output="${output_dir}" --no-color &> "${capture_file}"
+crystal spec "${modified_spec_file}" --junit_output="${output_dir}" --tag "~optional" --no-color &> "${capture_file}"
 
 ./bin/test_runner "${spec_file}" "${capture_file}" "${junit_file}" "${results_file}"
 
