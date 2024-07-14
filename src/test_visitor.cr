@@ -46,10 +46,10 @@ class TestVisitor < Crystal::Visitor
 
   private def handle_visit_describe_call(node : Crystal::Call)
     if tags = node.named_args
-      if tags.any?{ |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional"}
+      if tags.any? { |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional" }
         return
       end
-      @task_id = tags[0].value.as(Crystal::StringLiteral).value.to_i? # TODO: Write to be more robust to be able to support both optinal and task_id
+      @task_id = extract_task_id?(tags[0].value.as(Crystal::StringLiteral).value)
     else
       @task_id = nil
     end
@@ -65,7 +65,7 @@ class TestVisitor < Crystal::Visitor
 
   private def handle_end_visit_describe_call(node : Crystal::Call)
     if tags = node.named_args
-      if tags.any?{ |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional"}
+      if tags.any? { |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional" }
         return
       end
     end
@@ -86,8 +86,16 @@ class TestVisitor < Crystal::Visitor
     end_line_index = end_location.line_number - 1
 
     snippet = @source_code[start_line_index..end_line_index]
-    .map { |line| line[start_column_index..-1]? || "" }
-    .join("\n")
+      .map { |line| line[start_column_index..-1]? || "" }
+      .join("\n")
     @result << {snippet: snippet, name: name, task_id: @task_id}
+  end
+
+  private def extract_task_id?(text)
+    if text.starts_with?("task_id=")
+      text[8..-1].to_i?
+    else
+      nil
+    end
   end
 end
