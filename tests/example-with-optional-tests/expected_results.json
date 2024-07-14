@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "Bob hey responds to stating something",
+      "status": "pass",
+      "test_code": "Bob.hey(\"Tom-ay-to, tom-aaaah-to.\").should eq \"Whatever. Tom-ay-to, tom-aaaah-to.\"",
+      "output": "1\n1\n5\n5\n6\n6\n5\n5\n10\n10\n2\n2"
+    }
+  ]
+}

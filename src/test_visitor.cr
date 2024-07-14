@@ -74,6 +74,11 @@ class TestVisitor < Crystal::Visitor
   end
 
   private def handle_visit_it_call(node : Crystal::Call)
+    if tags = node.named_args
+      if tags.any? { |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional" }
+        return
+      end
+    end
     label = node.args[0].not_nil!.as(Crystal::StringLiteral).value
     current_test_name_prefix = @breadcrumbs.join(" ")
     name = "#{current_test_name_prefix} #{label}"
