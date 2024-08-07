@@ -7,14 +7,14 @@ require "compiler/crystal/syntax"
 class TestVisitor < Crystal::Visitor
   getter result = [] of NamedTuple(snippet: String, name: String, task_id: Int32?)
 
+  # The task_id is used to give the test cases a task_id.
+  @task_id : Int32? = nil
+
   # The initilization of the visitor.
   # The source_code is used to get the test snippets.
-  # The level is used to give the test cases a task_id.
   # The breadcrumbs are used to get the name of the test cases.
-  def initialize(source_code : Array(String))
-    @level = 0
+  def initialize(@source_code : Array(String))
     @breadcrumbs = [] of String
-    @source_code = source_code
   end
 
   # This method is used to visit the nodes of the AST, specifically the Call nodes.
@@ -45,7 +45,15 @@ class TestVisitor < Crystal::Visitor
   end
 
   private def handle_visit_describe_call(node : Crystal::Call)
-    @level += 1 if @breadcrumbs.size == 1
+    if tags = node.named_args
+      if tags.any? { |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional" }
+        return
+      end
+      @task_id = extract_task_id?(tags[0].value.as(Crystal::StringLiteral).value)
+    else
+      @task_id = nil
+    end
+
     case arg = node.args[0]
     when Crystal::StringLiteral
       @breadcrumbs << arg.value
@@ -56,11 +64,21 @@ class TestVisitor < Crystal::Visitor
   end
 
   private def handle_end_visit_describe_call(node : Crystal::Call)
+    if tags = node.named_args
+      if tags.any? { |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional" }
+        return
+      end
+    end
     @breadcrumbs.pop
     true
   end
 
   private def handle_visit_it_call(node : Crystal::Call)
+    if tags = node.named_args
+      if tags.any? { |tag| tag.value.as(Crystal::StringLiteral).value.to_s == "optional" }
+        return
+      end
+    end
     label = node.args[0].not_nil!.as(Crystal::StringLiteral).value
     current_test_name_prefix = @breadcrumbs.join(" ")
     name = "#{current_test_name_prefix} #{label}"
@@ -73,8 +91,16 @@ class TestVisitor < Crystal::Visitor
     end_line_index = end_location.line_number - 1
 
     snippet = @source_code[start_line_index..end_line_index]
-    .map { |line| line[start_column_index..-1]? || "" }
-    .join("\n")
-    @result << {snippet: snippet, name: name, task_id: @level != 0 ? @level : nil}
+      .map { |line| line[start_column_index..-1]? || "" }
+      .join("\n")
+    @result << {snippet: snippet, name: name, task_id: @task_id}
+  end
+
+  private def extract_task_id?(text)
+    if text.starts_with?("task_id=")
+      text[8..-1].to_i?
+    else
+      nil
+    end
   end
 end
