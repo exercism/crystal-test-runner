@@ -1,6 +1,10 @@
+# 2.1.1
+
+- Move to Crystal 1.14.0
+
 # 2.1
 
-- Move to Crystal 1.13.x
+- Move to Crystal 1.13.2
 - Changed task_id system to make it more secure but also more feature rich
 - Add support for optional tags
 
