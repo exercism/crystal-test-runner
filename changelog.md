@@ -1,6 +1,6 @@
 # 2.1.2
 
-- Move to Crystal 1.14.1
+- Move to Crystal 1.15.1
 
 # 2.1.1
 
