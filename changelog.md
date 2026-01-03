@@ -1,3 +1,8 @@
+# 2.1.3
+
+- Move to Crystal 1.19.x
+- Add support for parallel testing
+
 # 2.1.2
 
 - Move to Crystal 1.15.1
