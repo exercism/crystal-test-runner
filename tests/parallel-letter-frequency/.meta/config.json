@@ -1,0 +1,12 @@
+{
+  "files": {
+    "solution": [
+      "src/parallel_letter_frequency.cr"
+    ],
+    "test": [
+      "spec/parallel_letter_frequency_spec.cr"
+    ]
+  },
+  "blurb": "Create a sentence of the form \"One for X, one for me.\".",
+  "source_url": "https://github.com/exercism/problem-specifications/issues/757"
+}
