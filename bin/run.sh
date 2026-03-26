@@ -41,7 +41,12 @@ echo "${slug}: testing..."
 
 # Run the tests for the provided implementation file and redirect stdout and
 # stderr to capture it
+
+if [ "${slug}" = "parallel-letter-frequency" ]; then
+crystal spec "${modified_spec_file}" --junit_output="${output_dir}" --tag "~optional" -Dpreview_mt --no-color &> "${capture_file}"
+else
 crystal spec "${modified_spec_file}" --junit_output="${output_dir}" --tag "~optional" --no-color &> "${capture_file}"
+fi
 
 ./bin/test_runner "${spec_file}" "${capture_file}" "${junit_file}" "${results_file}"
 

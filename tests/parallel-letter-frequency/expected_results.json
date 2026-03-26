@@ -1,0 +1,36 @@
+{
+  "version": 3,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "ParallelLetterFrequency no texts",
+      "status": "pass",
+      "test_code": "input = [] of String\nexpected = {} of String => Int32\nParallelLetterFrequency.calculate_frequencies(input).should eq(expected)"
+    },
+    {
+      "name": "ParallelLetterFrequency one text with one letter",
+      "status": "pass",
+      "test_code": "input = [\"a\"]\nexpected = {\"a\" => 1}\nParallelLetterFrequency.calculate_frequencies(input).should eq(expected)"
+    },
+    {
+      "name": "ParallelLetterFrequency one text with multiple letters",
+      "status": "pass",
+      "test_code": "input = [\"bbcccd\"]\nexpected = {\"b\" => 2, \"c\" => 3, \"d\" => 1}\nParallelLetterFrequency.calculate_frequencies(input).should eq(expected)"
+    },
+    {
+      "name": "ParallelLetterFrequency two texts with one letter",
+      "status": "pass",
+      "test_code": "input = [\"e\", \"f\"]\nexpected = {\"e\" => 1, \"f\" => 1}\nParallelLetterFrequency.calculate_frequencies(input).should eq(expected)"
+    },
+    {
+      "name": "ParallelLetterFrequency two texts with multiple letters",
+      "status": "pass",
+      "test_code": "input = [\"ggh\", \"hhi\"]\nexpected = {\"g\" => 2, \"h\" => 3, \"i\" => 1}\nParallelLetterFrequency.calculate_frequencies(input).should eq(expected)"
+    },
+    {
+      "name": "ParallelLetterFrequency ignore letter casing",
+      "status": "pass",
+      "test_code": "input = [\"m\", \"M\"]\nexpected = {\"m\" => 2}\nParallelLetterFrequency.calculate_frequencies(input).should eq(expected)"
+    }
+  ]
+}
