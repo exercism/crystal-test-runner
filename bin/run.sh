@@ -35,6 +35,8 @@ results_file="${output_dir}/results.json"
 # Create the output directory if it doesn't exist
 mkdir -p "${output_dir}"
 
+
+
 echo "${slug}: testing..."
 
 ./bin/setup_test_file "${spec_file}" "${modified_spec_file}"
@@ -42,11 +44,17 @@ echo "${slug}: testing..."
 # Run the tests for the provided implementation file and redirect stdout and
 # stderr to capture it
 
+root=$(pwd)
+
+cd "${input_dir}"
+
 if [ "${slug}" = "parallel-letter-frequency" ]; then
 crystal spec "${modified_spec_file}" --junit_output="${output_dir}" --tag "~optional" -Dpreview_mt --no-color &> "${capture_file}"
 else
 crystal spec "${modified_spec_file}" --junit_output="${output_dir}" --tag "~optional" --no-color &> "${capture_file}"
 fi
+
+cd "${root}"
 
 ./bin/test_runner "${spec_file}" "${capture_file}" "${junit_file}" "${results_file}"
 
