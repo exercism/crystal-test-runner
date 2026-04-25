@@ -35,8 +35,6 @@ results_file="${output_dir}/results.json"
 # Create the output directory if it doesn't exist
 mkdir -p "${output_dir}"
 
-
-
 echo "${slug}: testing..."
 
 ./bin/setup_test_file "${spec_file}" "${modified_spec_file}"
