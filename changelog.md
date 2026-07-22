@@ -1,3 +1,7 @@
+# 2.2.1
+
+- Move to Crystal 1.20.3
+
 # 2.2.0
 
 - Move to Crystal 1.19.1
