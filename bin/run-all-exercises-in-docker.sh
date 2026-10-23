@@ -59,7 +59,7 @@ for test_dir in ${input_dir}/*; do
         exercism/test-runner "$(basename ${test_dir})" /solution /output
     if [ -s ${output_tmpdir}/results.json ]; then
         jq '.' ${output_tmpdir}/results.json | sponge ${output_tmpdir}/results.json
-        jq --arg key "$(basename ${test_dir})" --argfile new_data "${output_tmpdir}/results.json" '.[$key] = $new_data' ${output_dir}/result.json | sponge ${output_dir}/result.json
+        jq --arg key "$(basename ${test_dir})" --slurpfile new_data "${output_tmpdir}/results.json" '.[$key] = $new_data' ${output_dir}/result.json | sponge ${output_dir}/result.json
     else 
         jq --arg key "$(basename ${test_dir})" '.[$key] = "fail"' ${output_dir}/result.json | sponge ${output_dir}/result.json
     fi
