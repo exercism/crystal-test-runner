@@ -1,3 +1,7 @@
+# 2.2.2
+
+- Fill the compiler's cache at image build, so each run reuses the standard library's object files
+
 # 2.2.1
 
 - Move to Crystal 1.20.3

@@ -10,4 +10,7 @@ ENV CRYSTAL_CACHE_DIR=/tmp/.cache/.crystal
 
 RUN ./bin/build.sh
 
+# Fill the compiler's cache, so runs reuse the standard library's object files
+RUN ./bin/warm-up.sh
+
 ENTRYPOINT ["/opt/test-runner/bin/run.sh"]
