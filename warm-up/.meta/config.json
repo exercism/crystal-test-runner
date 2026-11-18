@@ -1,0 +1,10 @@
+{
+  "files": {
+    "solution": [
+      "src/warm_up.cr"
+    ],
+    "test": [
+      "spec/warm_up_spec.cr"
+    ]
+  }
+}
